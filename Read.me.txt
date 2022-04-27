@@ -1,0 +1,1 @@
+Para executar é para ir em dist/app/app.exe
