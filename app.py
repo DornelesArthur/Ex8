@@ -5,35 +5,33 @@ from tkinter.filedialog import askopenfile
 from PIL import Image, ImageTk
 from op_arit import ImageCalcArit
 from op_logic import ImageCalcLogic
-import time
 
 class App:
-    window = Tk()
-    FONT = "Yu Gothic"
-    width = 1280
-    height = 540
-    f_types = [('Jpg Files', '*.jpg')]
-    canvas = None
-    img1 = None
-    img2 = None
-    result_img = None
-    img1_TK = None
-    img2_TK = None
-    LogicCalculator = ImageCalcLogic()
-    ArithmeticCalculator = ImageCalcArit()
-    modify_error = "Sem imagem para modificar!"
-    save_error = "Sem imagem para salvar!"
-    upload_error = "Erro ao enviar imagem!"
-    number_error = "Input tem que ser um número!"
-    size_mode_error = "Imagens de tamanhos ou tipos diferentes!"
-    dark_color = "#D7D7D7"
-    light_color = "#393939"
-    multiply_val = StringVar()
-    division_val = StringVar()
-    blending_val = StringVar()
-    
 
     def __init__(self) -> None:
+        self.window = Tk()
+        self.FONT = "Yu Gothic"
+        self.width = 1280
+        self.height = 600
+        self.f_types = [('Images', ['*.jpg', '*.png', '*.bmp'])]
+        self.canvas = None
+        self.img1 = None
+        self.img2 = None
+        self.result_img = None
+        self.img1_TK = None
+        self.img2_TK = None
+        self.LogicCalculator = ImageCalcLogic()
+        self.ArithmeticCalculator = ImageCalcArit()
+        self.modify_error = "Sem imagem para modificar!"
+        self.save_error = "Sem imagem para salvar!"
+        self.upload_error = "Erro ao enviar imagem!"
+        self.number_error = "Input tem que ser um número!"
+        self.size_mode_error = "Imagens de tamanhos ou tipos diferentes!"
+        self.dark_color = "#D7D7D7"
+        self.light_color = "#393939"
+        self.multiply_val = StringVar()
+        self.division_val = StringVar()
+        self.blending_val = StringVar()
         self.window.geometry(str(self.width) + "x" + str(self.height))
         self.window.configure(bg = self.dark_color)
         self.window.title("Operadores Aritméticas e Lógicas em Imagens")
@@ -73,7 +71,7 @@ class App:
             messagebox.showerror("Error", self.save_error)
 
     def addition(self):
-        if (self.img1.size == self.img2 and self.img1.mode == self.img2.mode):
+        if (self.img1.size == self.img2.size and self.img1.mode == self.img2.mode):
             if (self.img1 != None and self.img2 != None):
                 self.result_img = self.ArithmeticCalculator.addition(self.img1,self.img2)
                 self.ShowResultImage()
@@ -83,7 +81,7 @@ class App:
             messagebox.showerror("Error", self.size_mode_error)
 
     def subtraction(self):
-        if (self.img1.size == self.img2 and self.img1.mode == self.img2.mode):
+        if (self.img1.size == self.img2.size and self.img1.mode == self.img2.mode):
             if (self.img1 != None and self.img2 != None):
                 self.result_img = self.ArithmeticCalculator.subtraction(self.img1,self.img2)
                 self.ShowResultImage()
@@ -117,7 +115,7 @@ class App:
         
 
     def mean(self):
-        if (self.img1.size == self.img2 and self.img1.mode == self.img2.mode):
+        if (self.img1.size == self.img2.size and self.img1.mode == self.img2.mode):
             if (self.img1 != None and self.img2 != None):
                 self.result_img = self.ArithmeticCalculator.mean(self.img1,self.img2)
                 self.ShowResultImage()
@@ -127,7 +125,7 @@ class App:
             messagebox.showerror("Error", self.size_mode_error)
 
     def blending(self):
-        if (self.img1.size == self.img2 and self.img1.mode == self.img2.mode):
+        if (self.img1.size == self.img2.size and self.img1.mode == self.img2.mode):
             try:
                 val = float(self.blending_val.get())
                 if (self.img1 != None and self.img2 != None and val != 0):
@@ -168,6 +166,23 @@ class App:
         else:
             messagebox.showerror("Error", self.modify_error)
 
+    def image_to_gray(self):
+        if ( not isinstance(int, type(self.img1.getpixel((0,0)))) ):
+            if (self.img1 != None):
+                self.result_img = self.ArithmeticCalculator.image_to_gray(self.img1)
+                self.ShowResultImage()
+            else:
+                messagebox.showerror("Error", self.modify_error)
+        else:
+            messagebox.showerror("Error", "Não é possivel converter para 8bit")
+
+    def image_to_bin(self):
+        if (self.img1 != None):
+            self.result_img = self.ArithmeticCalculator.image_to_bin(self.img1)
+            self.ShowResultImage()
+        else:
+            messagebox.showerror("Error", self.modify_error)
+
     def ShowResultImage(self):
         self.result_img.show()
         result_img_TK = self.result_img.resize((300, 300), Image.ANTIALIAS)
@@ -190,7 +205,7 @@ class App:
         self.canvas.create_rectangle(960, 120, 1260, 420,
             outline=self.light_color, fill=self.light_color)
 
-        self.canvas.create_line(20, 500, 1240, 500, width=2, fill=self.light_color)
+        self.canvas.create_line(20, 550, 1240, 550, width=2, fill=self.light_color)
 
         up1Button = Button(self.window, text="Carregar Imagem 1", width=26, command=self.UploadImage1, fg=self.dark_color, bg=self.light_color, font=(self.FONT, 14), activebackground=self.dark_color, activeforeground=self.light_color)
         up1Button.place(x=20, y=440)
@@ -230,6 +245,12 @@ class App:
 
         image_not_Button = Button(self.window, text="NOT", width=12, command=self.image_not, fg=self.dark_color, bg=self.light_color, font=(self.FONT, 10), activebackground=self.dark_color, activeforeground=self.light_color)
         image_not_Button.place(x=820, y=450)
+
+        image_to_gray_Button = Button(self.window, text="RGB -> 8bit", width=15, command=self.image_to_gray, fg=self.dark_color, bg=self.light_color, font=(self.FONT, 10), activebackground=self.dark_color, activeforeground=self.light_color)
+        image_to_gray_Button.place(x=20, y=500)
+
+        image_to_bin_Button = Button(self.window, text="RGB -> 1bit", width=15, command=self.image_to_bin, fg=self.dark_color, bg=self.light_color, font=(self.FONT, 10), activebackground=self.dark_color, activeforeground=self.light_color)
+        image_to_bin_Button.place(x=185, y=500)
 
         multiply_input = Entry(self.window, textvariable=self.multiply_val, bg="#CBC9C9", fg="#393939", font=(self.FONT, 12)).place(x=820, y=200, width=105,height=30)
 
@@ -274,8 +295,8 @@ class App:
             font = (self.FONT, int(14.0)))
 
         self.canvas.create_text(
-            640, 520,
-            text = "Arthur H Dorneles - 2022",
+            640, 575,
+            text = "Arthur Haas Dorneles - 2022",
             fill = self.light_color,
             font = (self.FONT, int(12.0)))
 
